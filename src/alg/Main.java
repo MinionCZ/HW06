@@ -20,6 +20,9 @@ public class Main {
                 for (; start <= end; start += step){
                     tree.insert(start);
                 }
+            }else{
+                //TODO delete
+                break;
             }
 
         }
