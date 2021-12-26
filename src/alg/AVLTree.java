@@ -12,13 +12,15 @@ public class AVLTree {
     private static final int RIGHT_ROTATION = 2;
     private static final int LEFT_STEP = 1;
     private static final int RIGHT_STEP = 2;
+    private int numberOfNodes = 0;
+    private int[] numberOfLeafs = new int[3];
 
     public AVLTree() {
         keys = new boolean[1000001];
     }
 
     public void insert(int key) {
-        System.out.println("inserting = " + key);
+//        System.out.println("inserting = " + key);
         if (this.keys[key]) return;
         if (this.numberOfKeys == 0) {
             root = new Node(key, null);
@@ -128,6 +130,8 @@ public class AVLTree {
     }
 
     public void delete(int key) {
+//        System.out.println("delete " + key);
+
         if (!this.keys[key]) return;
         if (this.numberOfKeys <= 3) {
             this.root.removeKey(key);
@@ -173,7 +177,7 @@ public class AVLTree {
             while (!subNode.isLeaf()) {
                 subNode = subNode.getRightChild();
             }
-            subKey = subNode.getMinKey();
+            subKey = subNode.getMaxKey();
             innerNode.addKey(subKey);
             this.deleteKey(innerNode.getLeftChild(), subKey);
         }
@@ -215,7 +219,7 @@ public class AVLTree {
                     parent.addKey(sibling.getMinKey());
                     parent.setRightChild(null);
                     parent.setLeftChild(null);
-                    //Todo add balancing
+                    this.balanceTreeAfterDelete(parent);
                 }
             } else {
                 int mostSimilarKey = parent.getMostSimilarKey(key);
@@ -226,16 +230,58 @@ public class AVLTree {
         }
     }
 
+    private void balanceTreeAfterDelete(Node actualNode){
+        while (actualNode != null){
+            int leftHeight = actualNode.getLeftHeight();
+            int rightHeight = actualNode.getRightHeight();
+            if (Math.abs(leftHeight - rightHeight) > 1){
+                //rotation must be done
+                int secondStep = rightHeight < leftHeight ? RIGHT_STEP : LEFT_STEP;
+                Node child = secondStep == RIGHT_STEP ? actualNode.getLeftChild() : actualNode.getRightChild();
+                int firstStep;
+                if (secondStep == RIGHT_STEP){
+                    firstStep = child.getRightHeight() <= child.getLeftHeight() ? RIGHT_STEP : LEFT_STEP;
+                }else{
+                    firstStep = child.getRightHeight() < child.getLeftHeight() ? RIGHT_STEP : LEFT_STEP;
+                }
+                if (firstStep == LEFT_STEP && secondStep == LEFT_STEP) {
+//                    System.out.println("LEFT");
+                    rotate(actualNode, child, LEFT_ROTATION);
+                } else if (firstStep == RIGHT_STEP && secondStep == RIGHT_STEP) {
+//                    System.out.println("RIGHT");
+                    rotate(actualNode, child, RIGHT_ROTATION);
+                } else if (firstStep == RIGHT_STEP && secondStep == LEFT_STEP) {
+                    //RL rotation
+//                    System.out.println("RIGHT LEFT");
+                    Node rightRotationNode = child.getLeftChild();
+                    rotate(child, rightRotationNode, RIGHT_ROTATION);
+                    rotate(actualNode, rightRotationNode, LEFT_ROTATION);
+                } else {
+                    //LR rotation
+//                    System.out.println("LEFT RIGHT");
+                    Node leftRotationNode = child.getRightChild();
+                    rotate(child, leftRotationNode, LEFT_ROTATION);
+                    rotate(actualNode, leftRotationNode, RIGHT_ROTATION);
+                }
+            }
+            actualNode = actualNode.getParent();
+        }
+    }
+
 
     public void printTree() {
         this.travelTree(this.root);
+        System.out.println(this.numberOfNodes + " " + this.numberOfLeafs[0] + " " + this.numberOfLeafs[1] + " " + this.numberOfLeafs[2]);
     }
 
     private void travelTree(Node actualNode) {
-        System.out.println(actualNode);
+//        System.out.println(actualNode);
+        this.numberOfNodes++;
         if (!actualNode.isLeaf()) {
             travelTree(actualNode.getLeftChild());
             travelTree(actualNode.getRightChild());
+        }else {
+            this.numberOfLeafs[actualNode.getNumberOfKeys() - 1]++;
         }
     }
 }
