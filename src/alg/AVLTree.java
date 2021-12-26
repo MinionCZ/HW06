@@ -24,8 +24,6 @@ public class AVLTree {
         } else {
             insertKeyIntoTree(root, key);
         }
-
-
         this.keys[key] = true;
         this.numberOfKeys++;
     }
@@ -41,7 +39,6 @@ public class AVLTree {
                 actualNode.setLeftChild(new Node(actualNode.getMinKey(), actualNode));
                 actualNode.removeKey(actualNode.getMaxKey());
                 actualNode.removeKey(actualNode.getMinKey());
-                //TODO add balancing
                 this.balanceTreeAfterInsert(actualNode);
             }
         } else {
@@ -93,8 +90,6 @@ public class AVLTree {
                     rotate(previous, leftRotationNode, LEFT_ROTATION);
                     rotate(actualNode, leftRotationNode, RIGHT_ROTATION);
                 }
-//                System.out.println("post rotation");
-//                printTree();
             }
             previous = actualNode;
             actualNode = actualNode.getParent();
@@ -111,7 +106,6 @@ public class AVLTree {
                 previousNode.setParent(actualNode.getParent());
                 actualNode.setParent(previousNode);
                 previousNode.setLeftChild(actualNode);
-
                 break;
             case RIGHT_ROTATION:
                 actualNode.setLeftChild(previousNode.getRightChild());
@@ -128,8 +122,6 @@ public class AVLTree {
         }else{
             parent.setRightChild(previousNode);
         }
-
-
     }
 
     public void printTree() {
