@@ -85,6 +85,13 @@ public class Node {
     public int getMaxKey() {
         return this.keys.get(this.numberOfKeys - 1);
     }
+    public int getMostSimilarKey(int key){
+        return Math.abs(key - this.getMaxKey()) < Math.abs(key - this.getMinKey()) ? this.getMaxKey() : this.getMinKey();
+    }
+    public void removeAllKeys(){
+        this.keys.clear();
+        this.numberOfKeys = 0;
+    }
 
     @Override
     public String toString() {
