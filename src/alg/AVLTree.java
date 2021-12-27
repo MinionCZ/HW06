@@ -34,7 +34,6 @@ public class AVLTree {
 
     private void insertKeyIntoTree(Node actualNode, int key) {
         if (actualNode.isLeaf()) {
-
             //insert into leaf
             actualNode.addKey(key);
             if (actualNode.getNumberOfKeys() > 3) {
@@ -78,7 +77,6 @@ public class AVLTree {
             actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
             if (Math.abs(actualNode.getLeftHeight() - actualNode.getRightHeight()) > 1) {
                 //rotate
-//                printTree();
                 executeRotation(firstPathStep, secondPathStep, actualNode, previous);
             }
             previous = actualNode;
@@ -152,7 +150,6 @@ public class AVLTree {
     }
 
     public void delete(int key) {
-//        printTree();
         if (!this.keys[key]) return;
         if (this.numberOfKeys <= 3) {
             this.root.removeKey(key);
@@ -164,6 +161,8 @@ public class AVLTree {
     }
 
     private void deleteKey(Node actualNode, int key) {
+//        System.out.println(key);
+//        System.out.println(actualNode);
         if (actualNode.getMaxKey() >= key && key >= actualNode.getMinKey()) {
             //key is in this node
             if (actualNode.isLeaf()) {
@@ -171,8 +170,6 @@ public class AVLTree {
             } else {
                 this.deleteKeyInInnerNode(actualNode, key);
             }
-
-
         } else if (actualNode.getMaxKey() < key) {
             this.deleteKey(actualNode.getRightChild(), key);
         } else {

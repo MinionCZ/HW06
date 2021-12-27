@@ -10,7 +10,7 @@ public class Node {
     private int numberOfKeys;
     private final int index;
     private int leftHeight, rightHeight;
-
+    private int minKey, maxKey;
     public Node(int key, Node parent) {
         this.keys = new ArrayList<>(4);
         this.keys.add(key);
@@ -19,6 +19,8 @@ public class Node {
         this.index = nodeIndex++;
         this.leftHeight = 0;
         this.rightHeight = 0;
+        this.minKey = key;
+        this.maxKey = key;
     }
 
     public Node getLeftChild() {
@@ -53,20 +55,34 @@ public class Node {
         return numberOfKeys;
     }
 
-    private int getHeightOfNode(Node node) {
-        if (node == null) return 0;
-        return Math.max(this.getHeightOfNode(node.getLeftChild()), this.getHeightOfNode(node.getRightChild())) + 1;
-    }
+
 
     public void addKey(int key) {
         this.numberOfKeys++;
         this.keys.add(key);
-        Collections.sort(this.keys);
+        maxKey = Math.max(maxKey, key);
+        minKey = Math.min(minKey, key);
     }
 
     public void removeKey(int key) {
         this.numberOfKeys--;
         this.keys.remove((Integer) key);
+        if (numberOfKeys == 0){
+            maxKey = 0;
+            minKey = Integer.MAX_VALUE;
+            return;
+        }
+        if (key == maxKey){
+            maxKey = 0;
+            for (int i : keys){
+                maxKey = Math.max(maxKey, i);
+            }
+        } else if (key == minKey){
+            minKey = Integer.MAX_VALUE;
+            for (int i : keys){
+                minKey = Math.min(minKey, i);
+            }
+        }
     }
 
     public boolean isLeaf() {
@@ -74,11 +90,11 @@ public class Node {
     }
 
     public int getMinKey() {
-        return this.keys.get(0);
+        return this.minKey;
     }
 
     public int getMaxKey() {
-        return this.keys.get(this.numberOfKeys - 1);
+        return this.maxKey;
     }
 
     public int getMostSimilarKey(int key) {
@@ -88,6 +104,8 @@ public class Node {
     public void removeAllKeys() {
         this.keys.clear();
         this.numberOfKeys = 0;
+        this.maxKey = 0;
+        this.minKey = Integer.MAX_VALUE;
     }
 
     public int getLeftHeight() {
@@ -138,6 +156,8 @@ public class Node {
                 ", numberOfKeys=" + numberOfKeys +
                 ",leftHeight= " + this.getLeftHeight() +
                 ",rightHeight= " + this.getRightHeight() +
+                ",minKey= " + this.minKey +
+                ",maxKey= " + this.maxKey +
                 '}';
     }
 }
