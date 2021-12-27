@@ -8,7 +8,8 @@ public class Node {
     private final ArrayList<Integer> keys;
     private Node leftChild, rightChild, parent;
     private int numberOfKeys;
-    private int index;
+    private final int index;
+    private int leftHeight, rightHeight;
 
     public Node(int key, Node parent) {
         this.keys = new ArrayList<>(4);
@@ -16,6 +17,8 @@ public class Node {
         this.numberOfKeys = 1;
         this.parent = parent;
         this.index = nodeIndex++;
+        this.leftHeight = 0;
+        this.rightHeight = 0;
     }
 
     public Node getLeftChild() {
@@ -50,14 +53,6 @@ public class Node {
         return numberOfKeys;
     }
 
-    public int getLeftHeight() {
-        return this.getHeightOfNode(this.leftChild);
-    }
-
-    public int getRightHeight() {
-        return this.getHeightOfNode(this.rightChild);
-    }
-
     private int getHeightOfNode(Node node) {
         if (node == null) return 0;
         return Math.max(this.getHeightOfNode(node.getLeftChild()), this.getHeightOfNode(node.getRightChild())) + 1;
@@ -85,13 +80,54 @@ public class Node {
     public int getMaxKey() {
         return this.keys.get(this.numberOfKeys - 1);
     }
-    public int getMostSimilarKey(int key){
+
+    public int getMostSimilarKey(int key) {
         return Math.abs(key - this.getMaxKey()) < Math.abs(key - this.getMinKey()) ? this.getMaxKey() : this.getMinKey();
     }
-    public void removeAllKeys(){
+
+    public void removeAllKeys() {
         this.keys.clear();
         this.numberOfKeys = 0;
     }
+
+    public int getLeftHeight() {
+        return leftHeight;
+    }
+
+    public void setLeftHeight(int leftHeight) {
+        this.leftHeight = leftHeight;
+    }
+
+    public int getRightHeight() {
+        return rightHeight;
+    }
+
+    public void setRightHeight(int rightHeight) {
+        this.rightHeight = rightHeight;
+    }
+
+    public void decrementLeftHeight() {
+        this.leftHeight--;
+    }
+
+    public void decrementRightHeight() {
+        this.rightHeight--;
+    }
+
+    public void incrementLeftHeight() {
+        this.leftHeight++;
+    }
+
+    public void incrementRightSide() {
+        this.rightHeight++;
+    }
+    public int getMaxHeight(){
+        return Math.max(this.rightHeight, this.leftHeight);
+    }
+    public int getMinHeight(){
+        return Math.min(this.rightHeight, this.leftHeight);
+    }
+
 
     @Override
     public String toString() {

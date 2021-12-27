@@ -6,14 +6,14 @@ import java.util.Collections;
 public class AVLTree {
 
     private Node root;
-    private boolean[] keys;
+    private final boolean[] keys;
     private int numberOfKeys;
     private static final int LEFT_ROTATION = 1;
     private static final int RIGHT_ROTATION = 2;
     private static final int LEFT_STEP = 1;
     private static final int RIGHT_STEP = 2;
     private int numberOfNodes = 0;
-    private int[] numberOfLeafs = new int[3];
+    private final int[] numberOfLeafs = new int[3];
 
     public AVLTree() {
         keys = new boolean[1000001];
@@ -73,27 +73,47 @@ public class AVLTree {
         int firstPathStep, secondPathStep = 0;
         Node previous = actualNode;
         while (actualNode != null) {
-            int leftHeight = actualNode.getLeftHeight();
-            int rightHeight = actualNode.getRightHeight();
             firstPathStep = secondPathStep;
             secondPathStep = previous == actualNode.getLeftChild() ? RIGHT_STEP : LEFT_STEP;
-
-            if (Math.abs(leftHeight - rightHeight) > 1) {
+            actualNode.setLeftHeight(actualNode.getLeftChild().getMaxHeight() + 1);
+            actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
+            if (Math.abs(actualNode.getLeftHeight() - actualNode.getRightHeight()) > 1) {
                 //rotate
+                int minHeight = actualNode.getMinHeight();
                 if (firstPathStep == LEFT_STEP && secondPathStep == LEFT_STEP) {
                     rotate(actualNode, previous, LEFT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    previous.setLeftHeight(minHeight + 1);
+                    previous.setRightHeight(minHeight + 1);
                 } else if (firstPathStep == RIGHT_STEP && secondPathStep == RIGHT_STEP) {
                     rotate(actualNode, previous, RIGHT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    previous.setLeftHeight(minHeight + 1);
+                    previous.setRightHeight(minHeight + 1);
                 } else if (firstPathStep == RIGHT_STEP && secondPathStep == LEFT_STEP) {
                     //RL rotation
                     Node rightRotationNode = previous.getLeftChild();
                     rotate(previous, rightRotationNode, RIGHT_ROTATION);
                     rotate(actualNode, rightRotationNode, LEFT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    previous.setLeftHeight(minHeight);
+                    previous.setRightHeight(minHeight);
+                    rightRotationNode.setRightHeight(minHeight + 1);
+                    rightRotationNode.setLeftHeight(minHeight + 1);
                 } else {
                     //LR rotation
                     Node leftRotationNode = previous.getRightChild();
                     rotate(previous, leftRotationNode, LEFT_ROTATION);
                     rotate(actualNode, leftRotationNode, RIGHT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    previous.setLeftHeight(minHeight);
+                    previous.setRightHeight(minHeight);
+                    leftRotationNode.setRightHeight(minHeight + 1);
+                    leftRotationNode.setLeftHeight(minHeight + 1);
                 }
             }
             previous = actualNode;
@@ -275,12 +295,12 @@ public class AVLTree {
     }
 
     private void travelTree(Node actualNode) {
-//        System.out.println(actualNode);
+        System.out.println(actualNode);
         this.numberOfNodes++;
         if (!actualNode.isLeaf()) {
             travelTree(actualNode.getLeftChild());
             travelTree(actualNode.getRightChild());
-        }else {
+        } else {
             this.numberOfLeafs[actualNode.getNumberOfKeys() - 1]++;
         }
     }

@@ -23,9 +23,10 @@ public class Main {
                 }
             }else{
                 //TODO delete
-                for (; start<=end; start += step){
-                    tree.delete(start);
-                }
+                break;
+//                for (; start<=end; start += step){
+//                    tree.delete(start);
+//                }
             }
 
         }
