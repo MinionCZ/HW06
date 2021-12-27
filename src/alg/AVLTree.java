@@ -1,6 +1,7 @@
 package alg;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class AVLTree {
@@ -83,7 +84,8 @@ public class AVLTree {
             actualNode = actualNode.getParent();
         }
     }
-    private void executeRotation(int firstPathStep, int secondPathStep, Node actualNode, Node previous){
+
+    private void executeRotation(int firstPathStep, int secondPathStep, Node actualNode, Node previous) {
         if (firstPathStep == LEFT_STEP && secondPathStep == LEFT_STEP) {
             rotate(actualNode, previous, LEFT_ROTATION);
             actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
@@ -161,19 +163,17 @@ public class AVLTree {
     }
 
     private void deleteKey(Node actualNode, int key) {
-//        System.out.println(key);
-//        System.out.println(actualNode);
-        if (actualNode.getMaxKey() >= key && key >= actualNode.getMinKey()) {
+        if (actualNode.getMaxKey() < key) {
+            this.deleteKey(actualNode.getRightChild(), key);
+        } else if (actualNode.getMinKey() > key) {
+            this.deleteKey(actualNode.getLeftChild(), key);
+        } else {
             //key is in this node
             if (actualNode.isLeaf()) {
                 this.deleteKeyFromLeaf(actualNode, key);
             } else {
                 this.deleteKeyInInnerNode(actualNode, key);
             }
-        } else if (actualNode.getMaxKey() < key) {
-            this.deleteKey(actualNode.getRightChild(), key);
-        } else {
-            this.deleteKey(actualNode.getLeftChild(), key);
         }
     }
 
@@ -210,26 +210,25 @@ public class AVLTree {
             if (sibling.isLeaf()) {
                 if (sibling.getNumberOfKeys() > 1) {
                     //key redistribution
-                    ArrayList<Integer> keys = new ArrayList<>();
-                    keys.addAll(parent.getKeys());
-                    keys.addAll(sibling.getKeys());
-                    Collections.sort(keys);
+                    int[] keys = new int[parent.getNumberOfKeys() + sibling.getNumberOfKeys()];
+                    int newStart = this.copyToArray(parent.getKeys(), keys, 0);
+                    this.copyToArray(sibling.getKeys(), keys, newStart);
+                    Arrays.sort(keys);
                     parent.removeAllKeys();
                     sibling.removeAllKeys();
                     if (isLeafSideLeft) {
-                        leaf.addKey(keys.get(0));
-                        parent.addKey(keys.get(1));
-                        parent.addKey(keys.get(2));
-                        for (int i = 3; i < keys.size(); i++) {
-                            sibling.addKey(keys.get(i));
+                        leaf.addKey(keys[0]);
+                        parent.addKey(keys[1]);
+                        parent.addKey(keys[2]);
+                        for (int i = 3; i < keys.length; i++) {
+                            sibling.addKey(keys[i]);
                         }
                     } else {
-                        int size = keys.size();
-                        leaf.addKey(keys.get(size - 1));
-                        parent.addKey(keys.get(size - 2));
-                        parent.addKey(keys.get(size - 3));
-                        for (int i = size - 4; i >= 0; i--) {
-                            sibling.addKey(keys.get(i));
+                        leaf.addKey(keys[keys.length - 1]);
+                        parent.addKey(keys[keys.length - 2]);
+                        parent.addKey(keys[keys.length - 3]);
+                        for (int i = keys.length - 4; i >= 0; i--) {
+                            sibling.addKey(keys[i]);
                         }
                     }
                 } else {
@@ -246,6 +245,14 @@ public class AVLTree {
             }
 
         }
+    }
+
+    private int copyToArray(ArrayList<Integer> list, int[] arr, int start) {
+        int size = list.size();
+        for (int i = 0; i < size; i++) {
+            arr[start + i] = list.get(i);
+        }
+        return start + size;
     }
 
     private void balanceTreeAfterDelete(Node actualNode) {

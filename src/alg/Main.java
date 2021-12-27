@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // write your code here
+        int operationCounter = 0;
         long runStart = System.currentTimeMillis();
         BufferedReader bfr = new BufferedReader(new InputStreamReader(System.in));
         int numberOfLines = Integer.parseInt(bfr.readLine());
@@ -20,17 +21,19 @@ public class Main {
             if (data[0].equals("I")){
                 for (; start <= end; start += step){
                     tree.insert(start);
+                    operationCounter++;
                 }
             }else{
                 //TODO delete
-//                break;
                 for (; start<=end; start += step){
                     tree.delete(start);
+                    operationCounter++;
                 }
             }
 
         }
         tree.printTree();
         System.err.println(System.currentTimeMillis() - runStart);
+        System.err.println("operations = " + operationCounter);
     }
 }
