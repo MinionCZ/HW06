@@ -211,8 +211,8 @@ public class AVLTree {
                 if (sibling.getNumberOfKeys() > 1) {
                     //key redistribution
                     int[] keys = new int[parent.getNumberOfKeys() + sibling.getNumberOfKeys()];
-                    int newStart = this.copyToArray(parent.getKeys(), keys, 0);
-                    this.copyToArray(sibling.getKeys(), keys, newStart);
+                    int newStart = this.copyToArray(parent.getKeys(), keys, 0, parent.getNumberOfKeys());
+                    this.copyToArray(sibling.getKeys(), keys, newStart, sibling.getNumberOfKeys());
                     Arrays.sort(keys);
                     parent.removeAllKeys();
                     sibling.removeAllKeys();
@@ -247,10 +247,9 @@ public class AVLTree {
         }
     }
 
-    private int copyToArray(ArrayList<Integer> list, int[] arr, int start) {
-        int size = list.size();
+    private int copyToArray(int[] list, int[] arr, int start, int size) {
         for (int i = 0; i < size; i++) {
-            arr[start + i] = list.get(i);
+            arr[start + i] = list[i];
         }
         return start + size;
     }

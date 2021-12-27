@@ -1,26 +1,27 @@
 package alg;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class Node {
     private static int nodeIndex = 0;
-    private final ArrayList<Integer> keys;
+    private final int[] keys;
     private Node leftChild, rightChild, parent;
     private int numberOfKeys;
     private final int index;
     private int leftHeight, rightHeight;
-    private int minKey, maxKey;
+
     public Node(int key, Node parent) {
-        this.keys = new ArrayList<>(4);
-        this.keys.add(key);
+        this.keys = new int[4];
+        Arrays.fill(this.keys, Integer.MAX_VALUE);
+        this.keys[0] = key;
         this.numberOfKeys = 1;
         this.parent = parent;
         this.index = nodeIndex++;
         this.leftHeight = 0;
         this.rightHeight = 0;
-        this.minKey = key;
-        this.maxKey = key;
+
     }
 
     public Node getLeftChild() {
@@ -47,7 +48,7 @@ public class Node {
         this.parent = parent;
     }
 
-    public ArrayList<Integer> getKeys() {
+    public int[] getKeys() {
         return keys;
     }
 
@@ -56,33 +57,21 @@ public class Node {
     }
 
 
-
     public void addKey(int key) {
+        this.keys[numberOfKeys] = key;
         this.numberOfKeys++;
-        this.keys.add(key);
-        maxKey = Math.max(maxKey, key);
-        minKey = Math.min(minKey, key);
+        Arrays.sort(keys);
     }
 
     public void removeKey(int key) {
         this.numberOfKeys--;
-        this.keys.remove((Integer) key);
-        if (numberOfKeys == 0){
-            maxKey = 0;
-            minKey = Integer.MAX_VALUE;
-            return;
-        }
-        if (key == maxKey){
-            maxKey = 0;
-            for (int i : keys){
-                maxKey = Math.max(maxKey, i);
-            }
-        } else if (key == minKey){
-            minKey = Integer.MAX_VALUE;
-            for (int i : keys){
-                minKey = Math.min(minKey, i);
+        for (int i = 0; i < this.keys.length; i++) {
+            if (this.keys[i] == key) {
+                this.keys[i] = Integer.MAX_VALUE;
+                break;
             }
         }
+        Arrays.sort(keys);
     }
 
     public boolean isLeaf() {
@@ -90,11 +79,11 @@ public class Node {
     }
 
     public int getMinKey() {
-        return this.minKey;
+        return this.keys[0];
     }
 
     public int getMaxKey() {
-        return this.maxKey;
+        return this.keys[numberOfKeys - 1];
     }
 
     public int getMostSimilarKey(int key) {
@@ -102,10 +91,8 @@ public class Node {
     }
 
     public void removeAllKeys() {
-        this.keys.clear();
+        Arrays.fill(this.keys, Integer.MAX_VALUE);
         this.numberOfKeys = 0;
-        this.maxKey = 0;
-        this.minKey = Integer.MAX_VALUE;
     }
 
     public int getLeftHeight() {
@@ -139,10 +126,12 @@ public class Node {
     public void incrementRightSide() {
         this.rightHeight++;
     }
-    public int getMaxHeight(){
+
+    public int getMaxHeight() {
         return Math.max(this.rightHeight, this.leftHeight);
     }
-    public int getMinHeight(){
+
+    public int getMinHeight() {
         return Math.min(this.rightHeight, this.leftHeight);
     }
 
@@ -156,8 +145,8 @@ public class Node {
                 ", numberOfKeys=" + numberOfKeys +
                 ",leftHeight= " + this.getLeftHeight() +
                 ",rightHeight= " + this.getRightHeight() +
-                ",minKey= " + this.minKey +
-                ",maxKey= " + this.maxKey +
+                ",minKey= " + this.getMinKey() +
+                ",maxKey= " + this.getMaxKey() +
                 '}';
     }
 }
