@@ -8,6 +8,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         // write your code here
+        long runStart = System.currentTimeMillis();
         BufferedReader bfr = new BufferedReader(new InputStreamReader(System.in));
         int numberOfLines = Integer.parseInt(bfr.readLine());
         AVLTree tree = new AVLTree();
@@ -29,6 +30,6 @@ public class Main {
 
         }
         tree.printTree();
-
+        System.err.println(System.currentTimeMillis() - runStart);
     }
 }
