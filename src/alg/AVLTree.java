@@ -20,7 +20,7 @@ public class AVLTree {
     }
 
     public void insert(int key) {
-//        System.out.println("inserting = " + key);
+        System.out.println("inserting = " + key);
         if (this.keys[key]) return;
         if (this.numberOfKeys == 0) {
             root = new Node(key, null);
@@ -79,41 +79,41 @@ public class AVLTree {
             actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
             if (Math.abs(actualNode.getLeftHeight() - actualNode.getRightHeight()) > 1) {
                 //rotate
-                int minHeight = actualNode.getMinHeight();
+//                printTree();
                 if (firstPathStep == LEFT_STEP && secondPathStep == LEFT_STEP) {
                     rotate(actualNode, previous, LEFT_ROTATION);
-                    actualNode.setRightHeight(minHeight);
-                    actualNode.setLeftHeight(minHeight);
-                    previous.setLeftHeight(minHeight + 1);
-                    previous.setRightHeight(minHeight + 1);
+                    actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
+                    actualNode.setLeftHeight(actualNode.getLeftChild().getMaxHeight() + 1);
+                    previous.setLeftHeight(previous.getLeftChild().getMaxHeight() + 1);
+                    previous.setRightHeight(previous.getRightChild().getMaxHeight() + 1);
                 } else if (firstPathStep == RIGHT_STEP && secondPathStep == RIGHT_STEP) {
                     rotate(actualNode, previous, RIGHT_ROTATION);
-                    actualNode.setRightHeight(minHeight);
-                    actualNode.setLeftHeight(minHeight);
-                    previous.setLeftHeight(minHeight + 1);
-                    previous.setRightHeight(minHeight + 1);
+                    actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
+                    actualNode.setLeftHeight(actualNode.getLeftChild().getMaxHeight() + 1);
+                    previous.setLeftHeight(previous.getLeftChild().getMaxHeight() + 1);
+                    previous.setRightHeight(previous.getRightChild().getMaxHeight() + 1);
                 } else if (firstPathStep == RIGHT_STEP && secondPathStep == LEFT_STEP) {
                     //RL rotation
                     Node rightRotationNode = previous.getLeftChild();
                     rotate(previous, rightRotationNode, RIGHT_ROTATION);
                     rotate(actualNode, rightRotationNode, LEFT_ROTATION);
-                    actualNode.setRightHeight(minHeight);
-                    actualNode.setLeftHeight(minHeight);
-                    previous.setLeftHeight(minHeight);
-                    previous.setRightHeight(minHeight);
-                    rightRotationNode.setRightHeight(minHeight + 1);
-                    rightRotationNode.setLeftHeight(minHeight + 1);
+                    actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
+                    actualNode.setLeftHeight(actualNode.getLeftChild().getMaxHeight() + 1);
+                    previous.setLeftHeight(previous.getLeftChild().getMaxHeight() + 1);
+                    previous.setRightHeight(previous.getRightChild().getMaxHeight() + 1);
+                    rightRotationNode.setRightHeight(rightRotationNode.getRightChild().getMaxHeight() + 1);
+                    rightRotationNode.setLeftHeight(rightRotationNode.getLeftChild().getMaxHeight() + 1);
                 } else {
                     //LR rotation
                     Node leftRotationNode = previous.getRightChild();
                     rotate(previous, leftRotationNode, LEFT_ROTATION);
                     rotate(actualNode, leftRotationNode, RIGHT_ROTATION);
-                    actualNode.setRightHeight(minHeight);
-                    actualNode.setLeftHeight(minHeight);
-                    previous.setLeftHeight(minHeight);
-                    previous.setRightHeight(minHeight);
-                    leftRotationNode.setRightHeight(minHeight + 1);
-                    leftRotationNode.setLeftHeight(minHeight + 1);
+                    actualNode.setRightHeight(actualNode.getRightChild().getMaxHeight() + 1);
+                    actualNode.setLeftHeight(actualNode.getLeftChild().getMaxHeight() + 1);
+                    previous.setLeftHeight(previous.getLeftChild().getMaxHeight() + 1);
+                    previous.setRightHeight(previous.getRightChild().getMaxHeight() + 1);
+                    leftRotationNode.setRightHeight(leftRotationNode.getRightChild().getMaxHeight() + 1);
+                    leftRotationNode.setLeftHeight(leftRotationNode.getLeftChild().getMaxHeight() + 1);
                 }
             }
             previous = actualNode;
