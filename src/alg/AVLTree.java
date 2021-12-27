@@ -150,8 +150,8 @@ public class AVLTree {
     }
 
     public void delete(int key) {
-//        System.out.println("delete " + key);
-
+        System.out.println("delete " + key);
+        printTree();
         if (!this.keys[key]) return;
         if (this.numberOfKeys <= 3) {
             this.root.removeKey(key);
@@ -250,38 +250,63 @@ public class AVLTree {
         }
     }
 
-    private void balanceTreeAfterDelete(Node actualNode){
-        while (actualNode != null){
-            int leftHeight = actualNode.getLeftHeight();
-            int rightHeight = actualNode.getRightHeight();
-            if (Math.abs(leftHeight - rightHeight) > 1){
+    private void balanceTreeAfterDelete(Node actualNode) {
+        while (actualNode != null) {
+            int leftHeight = actualNode.isLeaf() ? 0 : actualNode.getLeftChild().getMaxHeight() + 1;
+            int rightHeight = actualNode.isLeaf() ? 0 : actualNode.getRightChild().getMaxHeight() + 1;
+            actualNode.setLeftHeight(leftHeight);
+            actualNode.setRightHeight(rightHeight);
+            if (Math.abs(actualNode.getLeftHeight() - actualNode.getRightHeight()) > 1) {
                 //rotation must be done
-                int secondStep = rightHeight < leftHeight ? RIGHT_STEP : LEFT_STEP;
+                int secondStep = actualNode.getRightHeight() < actualNode.getLeftHeight() ? RIGHT_STEP : LEFT_STEP;
                 Node child = secondStep == RIGHT_STEP ? actualNode.getLeftChild() : actualNode.getRightChild();
                 int firstStep;
-                if (secondStep == RIGHT_STEP){
+                if (secondStep == RIGHT_STEP) {
                     firstStep = child.getRightHeight() <= child.getLeftHeight() ? RIGHT_STEP : LEFT_STEP;
-                }else{
+                } else {
                     firstStep = child.getRightHeight() < child.getLeftHeight() ? RIGHT_STEP : LEFT_STEP;
                 }
+                int minHeight = actualNode.getMinHeight();
                 if (firstStep == LEFT_STEP && secondStep == LEFT_STEP) {
 //                    System.out.println("LEFT");
                     rotate(actualNode, child, LEFT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    child.setLeftHeight(minHeight + 1);
+                    child.setRightHeight(minHeight + 1);
                 } else if (firstStep == RIGHT_STEP && secondStep == RIGHT_STEP) {
 //                    System.out.println("RIGHT");
                     rotate(actualNode, child, RIGHT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    child.setLeftHeight(minHeight + 1);
+                    child.setRightHeight(minHeight + 1);
                 } else if (firstStep == RIGHT_STEP && secondStep == LEFT_STEP) {
                     //RL rotation
 //                    System.out.println("RIGHT LEFT");
                     Node rightRotationNode = child.getLeftChild();
                     rotate(child, rightRotationNode, RIGHT_ROTATION);
                     rotate(actualNode, rightRotationNode, LEFT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    child.setLeftHeight(minHeight);
+                    child.setRightHeight(minHeight);
+                    rightRotationNode.setRightHeight(minHeight + 1);
+                    rightRotationNode.setLeftHeight(minHeight + 1);
+                    actualNode = rightRotationNode;
                 } else {
                     //LR rotation
 //                    System.out.println("LEFT RIGHT");
                     Node leftRotationNode = child.getRightChild();
                     rotate(child, leftRotationNode, LEFT_ROTATION);
                     rotate(actualNode, leftRotationNode, RIGHT_ROTATION);
+                    actualNode.setRightHeight(minHeight);
+                    actualNode.setLeftHeight(minHeight);
+                    child.setLeftHeight(minHeight);
+                    child.setRightHeight(minHeight);
+                    leftRotationNode.setRightHeight(minHeight + 1);
+                    leftRotationNode.setLeftHeight(minHeight + 1);
+                    actualNode = leftRotationNode;
                 }
             }
             actualNode = actualNode.getParent();
